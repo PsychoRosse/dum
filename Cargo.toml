@@ -1,6 +1,28 @@
 [package]
 name = "dum"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+description = ""
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/PsychoRosse/dum"
+readme = "README.md"
+keywords = ["graphics"]
+categories = ["game-development"]
+
+[[bin]]
+name = "dum"
+path = "dum-sandbox/src/main.rs"
+
+[lib]
+path = "dum-hell/src/_lib.rs"
 
 [dependencies]
+plam = { git = "https://github.com/PsychoRosse/plam.git"}
+glumy = { git = "https://github.com/PsychoRosse/glumy.git"}
+
+wgpu = "30.0.2"
+raw-window-handle = "0.6.2"
+pollster = "0.2.3"
+thiserror = "2.0.21"
+bitflags = "2.13.2"
+bytemuck = "1.25.2"
