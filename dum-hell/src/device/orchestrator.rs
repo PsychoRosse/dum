@@ -1,6 +1,7 @@
 use crate::{
-    BridgeDevice, Frame, FrameError, GpuInstance, GpuMesh, GraphicsDevice, Mesh, OrchestratorError,
-    Shader, WindowSurface,
+    BridgeDevice, Frame, FrameError, GlobalBindGroupLayout, GpuInstance, GpuMesh, GraphicsDevice,
+    MaterialBindGroupLayout, Mesh, ObjectBindGroupLayout, OrchestratorError, RenderPipeline,
+    RenderPipelineLayout, Shader, WindowSurface,
 };
 
 #[derive(Debug)]
@@ -9,6 +10,7 @@ pub struct Orchestrator {
     instance: GpuInstance,
     adapter: BridgeDevice,
     device: GraphicsDevice,
+    pipeline: RenderPipeline,
 }
 
 impl Orchestrator {
@@ -65,12 +67,19 @@ impl Orchestrator {
         let config = surface
             .get_default_config(
                 &adapter,
-                plam::WindowSize::hd().width(),
-                plam::WindowSize::hd().height(),
+                plam::Extent::hd().width(),
+                plam::Extent::hd().height(),
             )
             .ok_or(OrchestratorError::GetDefaultConfig)?;
 
         surface.configure(&device, &config);
+
+        let global = GlobalBindGroupLayout::new(&device);
+        let material = MaterialBindGroupLayout::new(&device);
+        let object = ObjectBindGroupLayout::new(&device);
+
+        let layout = RenderPipelineLayout::new(&device, &global, &material, &object);
+        let pipeline = RenderPipeline::new(&device, &config, layout.get());
 
         let instance = GpuInstance::new(instance);
         let adapter = BridgeDevice::new(adapter);
@@ -82,6 +91,7 @@ impl Orchestrator {
             instance,
             adapter,
             device,
+            pipeline,
         })
     }
 }
@@ -116,7 +126,13 @@ impl Orchestrator {
 
         let encoder = self.device.create_encoder();
 
-        Ok(Frame::new(output, view, encoder, suboptimal))
+        Ok(Frame::new(
+            output,
+            view,
+            encoder,
+            &self.pipeline,
+            suboptimal,
+        ))
     }
 
     pub fn end_frame(&self, frame: Frame) {
@@ -131,7 +147,7 @@ impl Orchestrator {
         }
     }
 
-    pub fn resize(&mut self, size: plam::SurfaceSize) {
+    pub fn resize(&mut self, size: plam::Extent) {
         self.surface.set_size(size);
         self.surface.reconfigure(self.device.get());
     }

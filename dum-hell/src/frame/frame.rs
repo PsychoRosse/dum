@@ -1,24 +1,27 @@
-use crate::{DrawPass, RenderPassDescriptor};
+use crate::{DrawPass, RenderPassDescriptor, RenderPipeline};
 
 #[derive(Debug)]
-pub struct Frame {
+pub struct Frame<'f> {
     output: wgpu::SurfaceTexture,
     view: wgpu::TextureView,
     encoder: wgpu::CommandEncoder,
+    pipeline: &'f RenderPipeline,
     suboptimal: bool,
 }
 
-impl Frame {
+impl<'f> Frame<'f> {
     pub(crate) fn new(
         output: wgpu::SurfaceTexture,
         view: wgpu::TextureView,
         encoder: wgpu::CommandEncoder,
+        pipeline: &'f RenderPipeline,
         suboptimal: bool,
     ) -> Self {
         Self {
             output,
             view,
             encoder,
+            pipeline,
             suboptimal,
         }
     }
@@ -49,6 +52,8 @@ impl Frame {
         });
 
         let mut pass = DrawPass::new(inner);
+
+        pass.set_pipeline(&self.pipeline.inner());
 
         callback(&mut pass);
     }

@@ -26,4 +26,12 @@ impl GpuMaterial {
 
         Self { buffer, bind_group }
     }
+
+    pub fn buffer(&self) -> &wgpu::Buffer {
+        &self.buffer
+    }
+
+    pub fn bind_group(&self) -> &wgpu::BindGroup {
+        &self.bind_group
+    }
 }

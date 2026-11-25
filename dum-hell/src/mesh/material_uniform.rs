@@ -3,7 +3,7 @@ use crate::Material;
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct MaterialUniform {
-    color: [f64; 4],
+    color: [f32; 4],
 }
 
 impl MaterialUniform {

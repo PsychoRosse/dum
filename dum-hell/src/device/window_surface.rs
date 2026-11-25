@@ -12,18 +12,18 @@ impl WindowSurface {
 
 impl WindowSurface {
     #[inline]
-    pub(crate) fn size(&self) -> plam::SurfaceSize {
-        plam::SurfaceSize::clamped(self.config.width, self.config.height)
+    pub(crate) fn size(&self) -> plam::Extent {
+        plam::Extent::clamped(self.config.width, self.config.height)
     }
 
     #[inline]
-    pub(crate) fn set_size(&mut self, size: plam::SurfaceSize) {
+    pub(crate) fn set_size(&mut self, size: plam::Extent) {
         self.config.width = size.width();
         self.config.height = size.height();
     }
 
     #[inline]
-    pub(crate) fn resize(&mut self, size: plam::SurfaceSize, device: &wgpu::Device) {
+    pub(crate) fn resize(&mut self, size: plam::Extent, device: &wgpu::Device) {
         self.config.width = size.width();
         self.config.height = size.height();
 

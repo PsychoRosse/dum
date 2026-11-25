@@ -1,4 +1,4 @@
-use dum::{Color, FrameError, Mesh, RenderPassDescriptor};
+use dum::{Color, Mesh, RenderPassDescriptor};
 
 fn main() -> Result<(), glumy::EventLoopError> {
     DumApp::default().run()

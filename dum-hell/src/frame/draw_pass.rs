@@ -9,6 +9,10 @@ impl<'r> DrawPass<'r> {
         Self { inner: pass }
     }
 
+    pub fn set_pipeline(&mut self, pipeline: &'r wgpu::RenderPipeline) {
+        self.inner.set_pipeline(pipeline);
+    }
+
     pub fn draw(&mut self, mesh: &GpuMesh) {
         self.inner
             .set_vertex_buffer(0, mesh.vertex_buffer().slice(..));
