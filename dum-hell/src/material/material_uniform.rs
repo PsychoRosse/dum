@@ -1,7 +1,7 @@
 use crate::Material;
 
 #[repr(C)]
-#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+#[derive(Debug, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct MaterialUniform {
     color: [f32; 4],
 }
@@ -9,7 +9,7 @@ pub struct MaterialUniform {
 impl MaterialUniform {
     pub fn from_material(material: &Material) -> Self {
         Self {
-            color: material.color().value,
+            color: material.color_value(),
         }
     }
 }

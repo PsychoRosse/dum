@@ -1,5 +1,6 @@
 use crate::Color;
 
+#[derive(Debug, Clone)]
 pub struct Material {
     color: Color,
 }
@@ -15,5 +16,9 @@ impl Material {
 
     pub const fn color(&self) -> Color {
         self.color
+    }
+
+    pub const fn color_value(&self) -> [f32; 4] {
+        self.color.value()
     }
 }

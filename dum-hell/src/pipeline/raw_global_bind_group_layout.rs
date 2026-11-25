@@ -1,10 +1,11 @@
-pub struct GlobalBindGroupLayout {
-    inner: wgpu::BindGroupLayout,
+#[derive(Debug)]
+pub struct RawGlobalBindGroupLayout {
+    raw: wgpu::BindGroupLayout,
 }
 
-impl GlobalBindGroupLayout {
+impl RawGlobalBindGroupLayout {
     pub fn new(device: &wgpu::Device) -> Self {
-        let inner = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        let raw = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("Global Bind Group Layout"),
             entries: &[wgpu::BindGroupLayoutEntry {
                 binding: 0,
@@ -18,10 +19,10 @@ impl GlobalBindGroupLayout {
             }],
         });
 
-        Self { inner }
+        Self { raw }
     }
 
-    pub(crate) fn layout(&self) -> &wgpu::BindGroupLayout {
-        &self.inner
+    pub(crate) fn raw(&self) -> &wgpu::BindGroupLayout {
+        &self.raw
     }
 }

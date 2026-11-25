@@ -1,10 +1,11 @@
-use crate::GpuMesh;
+use crate::{RawGpuMaterial, RawGpuMesh, RawGpuModel};
 
-pub struct DrawPass<'p> {
+#[derive(Debug)]
+pub struct RawDrawPass<'p> {
     inner: wgpu::RenderPass<'p>,
 }
 
-impl<'r> DrawPass<'r> {
+impl<'r> RawDrawPass<'r> {
     pub(crate) fn new(pass: wgpu::RenderPass<'r>) -> Self {
         Self { inner: pass }
     }
@@ -13,7 +14,10 @@ impl<'r> DrawPass<'r> {
         self.inner.set_pipeline(pipeline);
     }
 
-    pub fn draw(&mut self, mesh: &GpuMesh) {
+    pub fn draw(&mut self, mesh: &RawGpuMesh, model: &RawGpuModel, material: &RawGpuMaterial) {
+        self.inner.set_bind_group(1, material.bind_group(), &[]);
+        self.inner.set_bind_group(2, model.bind_group(), &[]);
+
         self.inner
             .set_vertex_buffer(0, mesh.vertex_buffer().slice(..));
 

@@ -1,23 +1,26 @@
+#![allow(dead_code)]
+
 use crate::{
-    BridgeDevice, Frame, FrameError, GlobalBindGroupLayout, GpuInstance, GpuMesh, GraphicsDevice,
-    MaterialBindGroupLayout, Mesh, ObjectBindGroupLayout, OrchestratorError, RenderPipeline,
-    RenderPipelineLayout, Shader, WindowSurface,
+    FrameError, Material, Mesh, OrchestratorError, RawAdapter, RawFrame, RawGlobalBindGroupLayout,
+    RawGpuInstance, RawGpuMaterial, RawGpuMesh, RawGpuModel, RawGraphicsDevice,
+    RawMaterialBindGroupLayout, RawObjectBindGroupLayout, RawRenderPipeline, RawShader,
+    RawWindowSurface,
 };
 
 #[derive(Debug)]
-pub struct Orchestrator {
-    surface: WindowSurface,
-    instance: GpuInstance,
-    adapter: BridgeDevice,
-    device: GraphicsDevice,
-    pipeline: RenderPipeline,
+pub struct RawOrchestrator {
+    surface: RawWindowSurface,
+    instance: RawGpuInstance,
+    adapter: RawAdapter,
+    device: RawGraphicsDevice,
+    pipeline: RawRenderPipeline,
 }
 
-impl Orchestrator {
+impl RawOrchestrator {
     pub fn block_on_new(
         raw_window_handle: raw_window_handle::RawWindowHandle,
         raw_display_handle: raw_window_handle::RawDisplayHandle,
-    ) -> Result<Orchestrator, OrchestratorError> {
+    ) -> Result<RawOrchestrator, OrchestratorError> {
         pollster::block_on(Self::new(raw_window_handle, raw_display_handle))
     }
 
@@ -74,17 +77,15 @@ impl Orchestrator {
 
         surface.configure(&device, &config);
 
-        let global = GlobalBindGroupLayout::new(&device);
-        let material = MaterialBindGroupLayout::new(&device);
-        let object = ObjectBindGroupLayout::new(&device);
+        let global = RawGlobalBindGroupLayout::new(&device);
+        let material = RawMaterialBindGroupLayout::new(&device);
+        let object = RawObjectBindGroupLayout::new(&device);
+        let pipeline = RawRenderPipeline::new(&device, &config, global, material, object);
 
-        let layout = RenderPipelineLayout::new(&device, &global, &material, &object);
-        let pipeline = RenderPipeline::new(&device, &config, layout.get());
-
-        let instance = GpuInstance::new(instance);
-        let adapter = BridgeDevice::new(adapter);
-        let device = GraphicsDevice::new(device, queue);
-        let surface = WindowSurface::new(surface, config);
+        let instance = RawGpuInstance::new(instance);
+        let adapter = RawAdapter::new(adapter);
+        let device = RawGraphicsDevice::new(device, queue);
+        let surface = RawWindowSurface::new(surface, config);
 
         Ok(Self {
             surface,
@@ -96,8 +97,8 @@ impl Orchestrator {
     }
 }
 
-impl Orchestrator {
-    pub fn begin_frame(&self) -> Result<Frame, FrameError> {
+impl RawOrchestrator {
+    pub fn begin_frame(&self) -> Result<RawFrame<'_>, FrameError> {
         let (output, suboptimal) = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
 
@@ -126,7 +127,7 @@ impl Orchestrator {
 
         let encoder = self.device.create_encoder();
 
-        Ok(Frame::new(
+        Ok(RawFrame::new(
             output,
             view,
             encoder,
@@ -135,10 +136,10 @@ impl Orchestrator {
         ))
     }
 
-    pub fn end_frame(&self, frame: Frame) {
+    pub fn end_frame(&self, frame: RawFrame) {
         let suboptimal = frame.is_suboptimal();
 
-        let (texture, encoder) = frame.take_all();
+        let (texture, encoder) = frame.take_output_encoder();
 
         self.device.present(texture, encoder);
 
@@ -156,11 +157,21 @@ impl Orchestrator {
         self.surface.reconfigure(self.device.get());
     }
 
-    pub fn create_shader(&self, label: Option<&str>, path: &str) -> Shader {
+    pub fn create_shader(&self, label: Option<&str>, path: &str) -> RawShader {
         self.device.create_shader(label, path)
     }
 
-    pub fn create_gpu_mesh(&self, mesh: &Mesh) -> GpuMesh {
+    pub fn create_gpu_mesh(&self, mesh: &Mesh) -> RawGpuMesh {
         self.device.create_gpu_mesh(mesh)
+    }
+
+    pub fn create_gpu_model(&self, mat4: plam::Mat4) -> RawGpuModel {
+        self.device
+            .create_gpu_model(mat4, &self.pipeline.object_layout())
+    }
+
+    pub fn create_gpu_material(&self, material: &Material) -> RawGpuMaterial {
+        self.device
+            .create_gpu_material(material, &self.pipeline.material_layout())
     }
 }

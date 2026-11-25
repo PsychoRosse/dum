@@ -1,9 +1,11 @@
+#![allow(dead_code)]
+
 #[derive(Debug)]
-pub struct GpuInstance {
+pub struct RawGpuInstance {
     instance: wgpu::Instance,
 }
 
-impl GpuInstance {
+impl RawGpuInstance {
     pub(crate) fn new(instance: wgpu::Instance) -> Self {
         Self { instance }
     }

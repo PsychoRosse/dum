@@ -1,8 +1,11 @@
-use crate::Frame;
+use crate::RawFrame;
 
 #[derive(Debug)]
 pub enum CurrentFrame<'f> {
-    Acquired { frame: Frame<'f>, suboptimal: bool },
+    Acquired {
+        frame: RawFrame<'f>,
+        suboptimal: bool,
+    },
     Validation,
     Timeout,
     Outdated,
@@ -21,7 +24,7 @@ impl<'f> CurrentFrame<'f> {
         )
     }
 
-    pub fn take(self) -> Option<Frame<'f>> {
+    pub fn take(self) -> Option<RawFrame<'f>> {
         match self {
             Self::Acquired { frame, .. } => Some(frame),
             _ => None,

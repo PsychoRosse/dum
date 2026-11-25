@@ -1,12 +1,10 @@
-use dum::{Color, Mesh, RenderPassDescriptor};
-
 fn main() -> Result<(), glumy::EventLoopError> {
     DumApp::default().run()
 }
 
 #[derive(Default)]
 struct DumApp {
-    orchest: Option<dum::Orchestrator>,
+    orchest: Option<dum::RawOrchestrator>,
 }
 
 impl DumApp {
@@ -20,7 +18,7 @@ impl glumy::Application for DumApp {
         let target = handle.target().unwrap();
 
         let mut orchest =
-            dum::Orchestrator::block_on_new(target.raw_window(), target.raw_display()).unwrap();
+            dum::RawOrchestrator::block_on_new(target.raw_window(), target.raw_display()).unwrap();
 
         orchest.resize(window.size());
 
@@ -36,11 +34,16 @@ impl glumy::Application for DumApp {
             glumy::WindowEvent::RedrawRequested => match orchest.begin_frame() {
                 Ok(mut frame) => {
                     frame.render_pass(
-                        RenderPassDescriptor {
-                            clear_color: Color::BLACK,
+                        dum::RenderPassDescriptor {
+                            clear_color: dum::Color::BLACK,
                         },
                         |pass| {
-                            pass.draw(&orchest.create_gpu_mesh(&Mesh::cube()));
+                            let mesh = &orchest.create_gpu_mesh(&dum::Mesh::triangle_2d());
+                            let model = &orchest.create_gpu_model(dum::Model::new().matrix());
+                            let material = &orchest
+                                .create_gpu_material(&dum::Material::from_color(dum::Color::RED));
+
+                            pass.draw(mesh, model, material);
                         },
                     );
 

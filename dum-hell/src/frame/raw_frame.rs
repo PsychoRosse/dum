@@ -1,20 +1,20 @@
-use crate::{DrawPass, RenderPassDescriptor, RenderPipeline};
+use crate::{RawDrawPass, RawRenderPipeline, RenderPassDescriptor};
 
 #[derive(Debug)]
-pub struct Frame<'f> {
+pub struct RawFrame<'f> {
     output: wgpu::SurfaceTexture,
     view: wgpu::TextureView,
     encoder: wgpu::CommandEncoder,
-    pipeline: &'f RenderPipeline,
+    pipeline: &'f RawRenderPipeline,
     suboptimal: bool,
 }
 
-impl<'f> Frame<'f> {
+impl<'f> RawFrame<'f> {
     pub(crate) fn new(
         output: wgpu::SurfaceTexture,
         view: wgpu::TextureView,
         encoder: wgpu::CommandEncoder,
-        pipeline: &'f RenderPipeline,
+        pipeline: &'f RawRenderPipeline,
         suboptimal: bool,
     ) -> Self {
         Self {
@@ -32,7 +32,7 @@ impl<'f> Frame<'f> {
 
     pub fn render_pass<F>(&mut self, descriptor: RenderPassDescriptor, callback: F)
     where
-        F: FnOnce(&mut DrawPass),
+        F: FnOnce(&mut RawDrawPass),
     {
         let inner = self.encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("Render Pass"),
@@ -51,14 +51,14 @@ impl<'f> Frame<'f> {
             multiview_mask: None,
         });
 
-        let mut pass = DrawPass::new(inner);
+        let mut pass = RawDrawPass::new(inner);
 
-        pass.set_pipeline(&self.pipeline.inner());
+        pass.set_pipeline(&self.pipeline.raw());
 
         callback(&mut pass);
     }
 
-    pub(crate) fn take_all(self) -> (wgpu::SurfaceTexture, wgpu::CommandEncoder) {
+    pub(crate) fn take_output_encoder(self) -> (wgpu::SurfaceTexture, wgpu::CommandEncoder) {
         let Self {
             output, encoder, ..
         } = self;

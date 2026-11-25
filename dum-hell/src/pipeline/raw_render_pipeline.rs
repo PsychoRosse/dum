@@ -1,16 +1,27 @@
-use crate::Vertex;
+use crate::{
+    RawGlobalBindGroupLayout, RawGraphicsipeline, RawMaterialBindGroupLayout,
+    RawObjectBindGroupLayout, RawRenderPipelineLayout, Vertex,
+};
 
 #[derive(Debug)]
-pub struct RenderPipeline {
-    pipeline: wgpu::RenderPipeline,
+pub struct RawRenderPipeline {
+    pipeline: RawGraphicsipeline,
+    global_layout: RawGlobalBindGroupLayout,
+    material_layout: RawMaterialBindGroupLayout,
+    object_layout: RawObjectBindGroupLayout,
 }
 
-impl RenderPipeline {
+impl RawRenderPipeline {
     pub fn new(
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
-        layout: &wgpu::PipelineLayout,
+        global_layout: RawGlobalBindGroupLayout,
+        material_layout: RawMaterialBindGroupLayout,
+        object_layout: RawObjectBindGroupLayout,
     ) -> Self {
+        let layout =
+            RawRenderPipelineLayout::new(&device, &global_layout, &material_layout, &object_layout);
+
         let vertex = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Vertex Shader"),
             source: wgpu::ShaderSource::Wgsl(include_str!("../shader/vertex.wgsl").into()),
@@ -23,7 +34,7 @@ impl RenderPipeline {
 
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
-            layout: Some(layout),
+            layout: Some(layout.get()),
             vertex: wgpu::VertexState {
                 module: &vertex,
                 entry_point: Some("vs_main"),
@@ -47,10 +58,29 @@ impl RenderPipeline {
             cache: None,
         });
 
-        Self { pipeline }
+        let pipeline = RawGraphicsipeline::new(pipeline);
+
+        Self {
+            pipeline,
+            global_layout,
+            material_layout,
+            object_layout,
+        }
     }
 
-    pub fn inner(&self) -> &wgpu::RenderPipeline {
-        &self.pipeline
+    pub fn raw(&self) -> &wgpu::RenderPipeline {
+        &self.pipeline.raw()
+    }
+
+    pub fn global_layout(&self) -> &wgpu::BindGroupLayout {
+        &self.global_layout.raw()
+    }
+
+    pub fn material_layout(&self) -> &wgpu::BindGroupLayout {
+        &self.material_layout.raw()
+    }
+
+    pub fn object_layout(&self) -> &wgpu::BindGroupLayout {
+        &self.object_layout.raw()
     }
 }

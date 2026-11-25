@@ -2,12 +2,13 @@ use crate::{Material, MaterialUniform};
 
 use wgpu::util::DeviceExt;
 
-pub struct GpuMaterial {
+#[derive(Debug, Clone)]
+pub struct RawGpuMaterial {
     buffer: wgpu::Buffer,
     bind_group: wgpu::BindGroup,
 }
 
-impl GpuMaterial {
+impl RawGpuMaterial {
     pub fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, material: &Material) -> Self {
         let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Material Buffer"),

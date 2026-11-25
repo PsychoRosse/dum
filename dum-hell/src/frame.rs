@@ -1,10 +1,10 @@
 mod current_frame;
-mod draw_pass;
-mod frame;
 mod frame_error;
+mod raw_draw_pass;
+mod raw_frame;
 mod render_pass_descriptor;
 
 pub use {
-    current_frame::CurrentFrame, draw_pass::DrawPass, frame::Frame, frame_error::FrameError,
-    render_pass_descriptor::RenderPassDescriptor,
+    current_frame::CurrentFrame, frame_error::FrameError, raw_draw_pass::RawDrawPass,
+    raw_frame::RawFrame, render_pass_descriptor::RenderPassDescriptor,
 };

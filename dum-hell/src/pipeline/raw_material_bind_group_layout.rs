@@ -1,14 +1,15 @@
-pub struct ObjectBindGroupLayout {
-    inner: wgpu::BindGroupLayout,
+#[derive(Debug)]
+pub struct RawMaterialBindGroupLayout {
+    raw: wgpu::BindGroupLayout,
 }
 
-impl ObjectBindGroupLayout {
+impl RawMaterialBindGroupLayout {
     pub fn new(device: &wgpu::Device) -> Self {
-        let inner = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Object Bind Group Layout"),
+        let raw = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Material Bind Group Layout"),
             entries: &[wgpu::BindGroupLayoutEntry {
                 binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
+                visibility: wgpu::ShaderStages::FRAGMENT,
                 ty: wgpu::BindingType::Buffer {
                     ty: wgpu::BufferBindingType::Uniform,
                     has_dynamic_offset: false,
@@ -18,10 +19,10 @@ impl ObjectBindGroupLayout {
             }],
         });
 
-        Self { inner }
+        Self { raw }
     }
 
-    pub(crate) fn layout(&self) -> &wgpu::BindGroupLayout {
-        &self.inner
+    pub(crate) fn raw(&self) -> &wgpu::BindGroupLayout {
+        &self.raw
     }
 }

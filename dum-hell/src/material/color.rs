@@ -1,6 +1,6 @@
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Color {
-    pub value: [f32; 4],
+    value: [f32; 4],
 }
 
 impl Default for Color {
@@ -10,11 +10,11 @@ impl Default for Color {
 }
 
 impl Color {
-    pub const WHITE: Self = Self::rgba(1.0, 1.0, 1.0, 1.0);
-    pub const BLACK: Self = Self::rgba(0.0, 0.0, 0.0, 1.0);
-    pub const RED: Self = Self::rgba(1.0, 0.0, 0.0, 1.0);
-    pub const GREEN: Self = Self::rgba(0.0, 1.0, 0.0, 1.0);
-    pub const BLUE: Self = Self::rgba(0.0, 0.0, 1.0, 1.0);
+    pub const WHITE: Self = Self::rgb(1.0, 1.0, 1.0);
+    pub const BLACK: Self = Self::rgb(0.0, 0.0, 0.0);
+    pub const RED: Self = Self::rgb(1.0, 0.0, 0.0);
+    pub const GREEN: Self = Self::rgb(0.0, 1.0, 0.0);
+    pub const BLUE: Self = Self::rgb(0.0, 0.0, 1.0);
 }
 
 impl Color {
@@ -28,6 +28,26 @@ impl Color {
         Self {
             value: [r, g, b, a],
         }
+    }
+
+    pub const fn value(self) -> [f32; 4] {
+        self.value
+    }
+
+    pub const fn r(self) -> f32 {
+        self.value[0]
+    }
+
+    pub const fn g(self) -> f32 {
+        self.value[1]
+    }
+
+    pub const fn b(self) -> f32 {
+        self.value[2]
+    }
+
+    pub const fn a(self) -> f32 {
+        self.value[3]
     }
 
     pub(crate) fn to_wgpu(self) -> wgpu::Color {
