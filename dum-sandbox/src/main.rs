@@ -31,11 +31,11 @@ impl glumy::Application for DumApp {
         orchest.resize(window.size());
 
         let mut camera = dum::Camera::default();
-        
+
         camera.set_aspect_from_surface(window.size());
 
         let view = Mat4::unchecked_look_at_rh(EYE, TARGET, UP);
-        
+
         self.gpu_camera = Some(orchest.create_gpu_camera(camera.view_projection_matrix(view)));
         self.camera = Some(camera);
 
@@ -72,12 +72,11 @@ impl glumy::Application for DumApp {
                                 pass.set_camera(gpu_camera);
                             }
 
-                            let mesh = &orchest.create_gpu_mesh(&dum::Mesh::triangle_2d());
-                            let model = &orchest.create_gpu_model(dum::Model::new().matrix());
-                            let material = &orchest
-                                .create_gpu_material(&dum::Material::from_color(dum::Color::RED));
-
-                            pass.draw(mesh, model, material);
+                            pass.draw(
+                                &orchest.create_gpu_mesh(&dum::Mesh::triangle_2d()),
+                                &orchest.create_gpu_model(dum::Transform::default().matrix()),
+                                &orchest.create_gpu_material(&dum::Material::new(dum::Color::RED)),
+                            );
                         },
                     );
 
