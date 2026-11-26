@@ -5,6 +5,7 @@ pub struct ModelUniform {
 }
 
 impl ModelUniform {
+    #[inline]
     pub fn from_mat4(model: plam::Mat4) -> Self {
         Self {
             model: model.to_cols_array_2d(),

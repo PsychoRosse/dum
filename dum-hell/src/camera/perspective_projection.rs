@@ -24,26 +24,32 @@ impl PerspectiveProjection {
 }
 
 impl PerspectiveProjection {
+    #[inline]
     pub fn set_aspect_ratio(&mut self, aspect: f32) {
         self.aspect = aspect;
     }
 
+    #[inline]
     pub fn projection_matrix(&self) -> plam::Mat4 {
         plam::Mat4::unchecked_perspective_rh(self.fov, self.aspect, self.near, self.far)
     }
 
+    #[inline]
     pub const fn fov(&self) -> f32 {
         self.fov
     }
 
+    #[inline]
     pub const fn aspect(&self) -> f32 {
         self.aspect
     }
 
+    #[inline]
     pub const fn near(&self) -> f32 {
         self.near
     }
 
+    #[inline]
     pub const fn far(&self) -> f32 {
         self.far
     }

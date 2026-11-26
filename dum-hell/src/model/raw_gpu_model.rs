@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::ModelUniform;
+use crate::{ModelUniform, RawGraphicsDevice};
 
 use wgpu::util::DeviceExt;
 
@@ -33,12 +33,24 @@ impl RawGpuModel {
 
         Self { buffer, bind_group }
     }
+}
 
+impl RawGpuModel {
+    #[inline]
     pub(crate) fn buffer(&self) -> &wgpu::Buffer {
         &self.buffer
     }
 
+    #[inline]
     pub(crate) fn bind_group(&self) -> &wgpu::BindGroup {
         &self.bind_group
+    }
+
+    #[inline]
+    pub fn update(&mut self, device: &RawGraphicsDevice, model: plam::Mat4) {
+        device.write_buffer(
+            &self.buffer,
+            std::slice::from_ref(&ModelUniform::from_mat4(model)),
+        );
     }
 }

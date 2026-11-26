@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::{RawGlobalBindGroupLayout, RawMaterialBindGroupLayout, RawObjectBindGroupLayout};
 
 #[derive(Debug)]
@@ -16,7 +14,7 @@ impl RawRenderPipelineLayout {
     ) -> Self {
         let raw = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[None, Some(material.raw()), Some(object.raw())],
+            bind_group_layouts: &[Some(global.raw()), Some(material.raw()), Some(object.raw())],
             immediate_size: 0,
         });
 

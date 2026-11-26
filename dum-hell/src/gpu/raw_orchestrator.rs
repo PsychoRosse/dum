@@ -2,12 +2,12 @@
 
 use crate::{
     FrameError, Material, Mesh, OrchestratorError, RawAdapter, RawFrame, RawGlobalBindGroupLayout,
-    RawGpuInstance, RawGpuMaterial, RawGpuMesh, RawGpuModel, RawGraphicsDevice,
+    RawGpuCamera, RawGpuInstance, RawGpuMaterial, RawGpuMesh, RawGpuModel, RawGraphicsDevice,
     RawMaterialBindGroupLayout, RawObjectBindGroupLayout, RawRenderPipeline, RawShader,
     RawWindowSurface,
 };
 
-#[derive(Debug)]
+#[derive(clama::Resource, Debug)]
 pub struct RawOrchestrator {
     surface: RawWindowSurface,
     instance: RawGpuInstance,
@@ -98,6 +98,12 @@ impl RawOrchestrator {
 }
 
 impl RawOrchestrator {
+    #[inline]
+    pub fn device(&self) -> &RawGraphicsDevice {
+        &self.device
+    }
+
+    #[inline]
     pub fn begin_frame(&self) -> Result<RawFrame<'_>, FrameError> {
         let (output, suboptimal) = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
@@ -136,6 +142,7 @@ impl RawOrchestrator {
         ))
     }
 
+    #[inline]
     pub fn end_frame(&self, frame: RawFrame) {
         let suboptimal = frame.is_suboptimal();
 
@@ -148,30 +155,51 @@ impl RawOrchestrator {
         }
     }
 
+    #[inline]
     pub fn resize(&mut self, size: plam::Extent) {
         self.surface.set_size(size);
         self.surface.reconfigure(self.device.get());
     }
 
+    #[inline]
     pub fn reconfigure(&self) {
         self.surface.reconfigure(self.device.get());
     }
 
+    #[inline]
+    pub fn write_buffer<T: bytemuck::Pod + bytemuck::Zeroable>(
+        &self,
+        buffer: &wgpu::Buffer,
+        data: &[T],
+    ) {
+        self.device.write_buffer(buffer, data);
+    }
+
+    #[inline]
     pub fn create_shader(&self, label: Option<&str>, path: &str) -> RawShader {
         self.device.create_shader(label, path)
     }
 
+    #[inline]
     pub fn create_gpu_mesh(&self, mesh: &Mesh) -> RawGpuMesh {
         self.device.create_gpu_mesh(mesh)
     }
 
+    #[inline]
     pub fn create_gpu_model(&self, mat4: plam::Mat4) -> RawGpuModel {
         self.device
             .create_gpu_model(mat4, &self.pipeline.object_layout())
     }
 
+    #[inline]
     pub fn create_gpu_material(&self, material: &Material) -> RawGpuMaterial {
         self.device
             .create_gpu_material(material, &self.pipeline.material_layout())
+    }
+
+    #[inline]
+    pub fn create_gpu_camera(&self, mat4: plam::Mat4) -> RawGpuCamera {
+        self.device
+            .create_gpu_camera(mat4, &self.pipeline.global_layout())
     }
 }

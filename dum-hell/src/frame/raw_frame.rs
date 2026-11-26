@@ -10,6 +10,7 @@ pub struct RawFrame<'f> {
 }
 
 impl<'f> RawFrame<'f> {
+    #[inline]
     pub(crate) fn new(
         output: wgpu::SurfaceTexture,
         view: wgpu::TextureView,
@@ -25,11 +26,15 @@ impl<'f> RawFrame<'f> {
             suboptimal,
         }
     }
+}
 
+impl<'f> RawFrame<'f> {
+    #[inline]
     pub fn is_suboptimal(&self) -> bool {
         self.suboptimal
     }
 
+    #[inline]
     pub fn render_pass<F>(&mut self, descriptor: RenderPassDescriptor, callback: F)
     where
         F: FnOnce(&mut RawDrawPass),
@@ -58,6 +63,7 @@ impl<'f> RawFrame<'f> {
         callback(&mut pass);
     }
 
+    #[inline]
     pub(crate) fn take_output_encoder(self) -> (wgpu::SurfaceTexture, wgpu::CommandEncoder) {
         let Self {
             output, encoder, ..

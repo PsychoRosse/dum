@@ -13,19 +13,25 @@ impl Model {
             scale: plam::Vec3::ONE,
         }
     }
+}
 
+impl Model {
+    #[inline]
     pub fn set_position(&mut self, position: plam::Vec3) {
         self.position = position;
     }
 
+    #[inline]
     pub fn set_rotation(&mut self, rotation: plam::Quat) {
         self.rotation = rotation;
     }
 
+    #[inline]
     pub fn set_scale(&mut self, scale: plam::Vec3) {
         self.scale = scale;
     }
 
+    #[inline]
     pub fn matrix(&self) -> plam::Mat4 {
         plam::Mat4::unchecked_from_scale_rotation_translation(
             self.scale,

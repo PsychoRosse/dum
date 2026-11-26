@@ -13,11 +13,15 @@ impl Material {
     pub const fn from_color(color: Color) -> Self {
         Self::new(color)
     }
+}
 
+impl Material {
+    #[inline]
     pub const fn color(&self) -> Color {
         self.color
     }
 
+    #[inline]
     pub const fn color_value(&self) -> [f32; 4] {
         self.color.value()
     }

@@ -12,6 +12,7 @@ impl Default for Projection {
 }
 
 impl Projection {
+    #[inline]
     pub fn projection_matrix(&self) -> plam::Mat4 {
         match self {
             Projection::Perspective(projection) => projection.projection_matrix(),

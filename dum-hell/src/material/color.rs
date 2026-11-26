@@ -29,7 +29,9 @@ impl Color {
             value: [r, g, b, a],
         }
     }
+}
 
+impl Color {
     pub const fn value(self) -> [f32; 4] {
         self.value
     }
@@ -49,7 +51,9 @@ impl Color {
     pub const fn a(self) -> f32 {
         self.value[3]
     }
+}
 
+impl Color {
     pub(crate) fn to_wgpu(self) -> wgpu::Color {
         wgpu::Color {
             r: self.value[0] as f64,

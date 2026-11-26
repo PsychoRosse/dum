@@ -24,12 +24,12 @@ impl RawRenderPipeline {
 
         let vertex = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Vertex Shader"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("../shader/vertex.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("../wgsl/vertex.wgsl").into()),
         });
 
         let fragment = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Fragment Shader"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("../shader/fragment.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("../wgsl/fragment.wgsl").into()),
         });
 
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -67,7 +67,9 @@ impl RawRenderPipeline {
             object_layout,
         }
     }
+}
 
+impl RawRenderPipeline {
     pub fn raw(&self) -> &wgpu::RenderPipeline {
         &self.pipeline.raw()
     }

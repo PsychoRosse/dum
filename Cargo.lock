@@ -220,7 +220,7 @@ checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
 [[package]]
 name = "clama"
 version = "0.1.0"
-source = "git+https://github.com/PsychoRosse/clama#09db267c8c3540c763acfa68f72d1463ba5bd171"
+source = "git+https://github.com/PsychoRosse/clama.git#09db267c8c3540c763acfa68f72d1463ba5bd171"
 dependencies = [
  "clama-macros",
  "serde",
@@ -230,7 +230,7 @@ dependencies = [
 [[package]]
 name = "clama-macros"
 version = "0.1.0"
-source = "git+https://github.com/PsychoRosse/clama#09db267c8c3540c763acfa68f72d1463ba5bd171"
+source = "git+https://github.com/PsychoRosse/clama.git#09db267c8c3540c763acfa68f72d1463ba5bd171"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -332,6 +332,7 @@ version = "1.0.0"
 dependencies = [
  "bitflags",
  "bytemuck",
+ "clama",
  "glumy",
  "plam",
  "pollster",

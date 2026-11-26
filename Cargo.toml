@@ -19,6 +19,7 @@ path = "dum-hell/src/_lib.rs"
 [dependencies]
 plam = { git = "https://github.com/PsychoRosse/plam.git"}
 glumy = { git = "https://github.com/PsychoRosse/glumy.git"}
+clama = { git = "https://github.com/PsychoRosse/clama.git"}
 
 wgpu = "30.0.2"
 raw-window-handle = "0.6.2"

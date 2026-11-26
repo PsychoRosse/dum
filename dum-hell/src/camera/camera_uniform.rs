@@ -5,9 +5,10 @@ pub struct CameraUniform {
 }
 
 impl CameraUniform {
-    pub fn from_mat4(mat: plam::Mat4) -> Self {
+    #[inline]
+    pub fn from_mat4(mat4: plam::Mat4) -> Self {
         Self {
-            view_projection: mat.to_cols_array_2d(),
+            view_projection: mat4.to_cols_array_2d(),
         }
     }
 }

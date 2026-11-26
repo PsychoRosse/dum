@@ -1,3 +1,10 @@
+struct CameraUniform {
+    view_projection: mat4x4<f32>,
+};
+
+@group(0) @binding(0)
+var<uniform> camera: CameraUniform;
+
 struct ModelUniform {
     model: mat4x4<f32>,
 };
@@ -22,7 +29,7 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     var output: VertexOutput;
 
     output.position =
-        object.model * vec4<f32>(input.position, 1.0);
+        camera.view_projection * object.model * vec4<f32>(input.position, 1.0);
 
     output.normal = input.normal;
     output.uv = input.uv;

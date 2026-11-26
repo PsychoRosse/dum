@@ -1,4 +1,4 @@
-use crate::{Material, MaterialUniform};
+use crate::{Material, MaterialUniform, RawGraphicsDevice};
 
 use wgpu::util::DeviceExt;
 
@@ -27,12 +27,24 @@ impl RawGpuMaterial {
 
         Self { buffer, bind_group }
     }
+}
 
+impl RawGpuMaterial {
+    #[inline]
     pub fn buffer(&self) -> &wgpu::Buffer {
         &self.buffer
     }
 
+    #[inline]
     pub fn bind_group(&self) -> &wgpu::BindGroup {
         &self.bind_group
+    }
+
+    #[inline]
+    pub fn update(&self, device: &RawGraphicsDevice, material: &Material) {
+        device.write_buffer(
+            &self.buffer,
+            std::slice::from_ref(&MaterialUniform::from_material(material)),
+        );
     }
 }
